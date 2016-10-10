@@ -68,6 +68,9 @@ class Binding(object):
 
     fields = None
 
+    # Use exclude as an alternative to fields
+    exclude = None
+
     # Decorators
     channel_session_user = True
     channel_session = False
@@ -96,8 +99,8 @@ class Binding(object):
             else:
                 raise ValueError("You must set the model attribute on Binding %r!" % cls)
         # If fields is not defined, raise an error
-        if cls.fields is None:
-            raise ValueError("You must set the fields attribute on Binding %r!" % cls)
+        if cls.fields is None and cls.exclude is None:
+            raise ValueError("You must set the fields or exclude attributes on Binding %r!" % cls)
         # Optionally resolve model strings
         if isinstance(cls.model, six.string_types):
             cls.model = apps.get_model(cls.model)

@@ -7,6 +7,8 @@ from .base import Binding
 from ..generic.websockets import WebsocketDemultiplexer
 from ..sessions import enforce_ordering
 
+from itertools import chain
+
 
 class WebsocketBinding(Binding):
     """
@@ -57,8 +59,12 @@ class WebsocketBinding(Binding):
         """
         if self.fields == ['__all__']:
             fields = None
-        else:
+        elif self.fields is not None:
             fields = self.fields
+        else:
+            opts = instance._meta
+            fields = [f.name for f in opts.get_fields() if f.name not in self.exclude]
+
         data = serializers.serialize('json', [instance], fields=fields)
         return json.loads(data)[0]['fields']
 
